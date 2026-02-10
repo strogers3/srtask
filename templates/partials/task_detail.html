@@ -1,0 +1,119 @@
+<div class="space-y-6">
+    <!-- Task header -->
+    <div class="flex items-start gap-3">
+        <button hx-post="{% url 'tasks:task_toggle' task.pk %}"
+                hx-target="#task-{{ task.pk }}"
+                hx-swap="outerHTML"
+                class="mt-1 flex-shrink-0">
+            {% if task.status == 'completed' %}
+            <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            {% else %}
+            <div class="w-6 h-6 rounded-full border-2 hover:border-green-400 transition-colors"
+                 style="border-color: {{ task.priority_color }}"></div>
+            {% endif %}
+        </button>
+        <div class="flex-1">
+            <h2 class="text-xl font-semibold text-gray-900 {% if task.status == 'completed' %}line-through text-gray-400{% endif %}">
+                {{ task.title }}
+            </h2>
+            {% if task.description %}
+            <p class="text-sm text-gray-500 mt-1">{{ task.description }}</p>
+            {% endif %}
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{% url 'tasks:task_edit' task.pk %}"
+               class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+            </a>
+            <button hx-post="{% url 'tasks:task_delete' task.pk %}"
+                    hx-target="#task-{{ task.pk }}"
+                    hx-swap="outerHTML"
+                    hx-confirm="Delete this task?"
+                    class="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Metadata -->
+    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+        {% if task.due_date %}
+        <span class="flex items-center gap-1 {% if task.is_overdue %}text-red-500{% endif %}">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            {{ task.due_date|date:"M j, Y" }}{% if task.due_time %} at {{ task.due_time|time:"g:i A" }}{% endif %}
+        </span>
+        {% endif %}
+        {% if task.project %}
+        <span class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full" style="background-color: {{ task.project.color }}"></span>
+            {{ task.project.name }}
+        </span>
+        {% endif %}
+        <span class="flex items-center gap-1">
+            <span class="w-2 h-2 rounded-full priority-dot-{{ task.priority }}"></span>
+            {{ task.get_priority_display }}
+        </span>
+    </div>
+
+    <!-- Steps -->
+    <div>
+        <h3 class="text-sm font-semibold text-gray-700 mb-2">Steps {% if task.steps_progress %}({{ task.steps_progress }}){% endif %}</h3>
+        <div id="steps-list" class="space-y-1 mb-2">
+            {% for step in steps %}
+                {% include "partials/step_item.html" %}
+            {% endfor %}
+        </div>
+        <form hx-post="{% url 'tasks:step_create' task.pk %}"
+              hx-target="#steps-list"
+              hx-swap="beforeend"
+              hx-on::after-request="if(event.detail.successful) this.reset()"
+              class="flex items-center gap-2">
+            {% csrf_token %}
+            <input type="text" name="title" required
+                   class="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                   placeholder="Add a step...">
+            <button type="submit" class="text-sm text-indigo-600 font-medium hover:text-indigo-700">Add</button>
+        </form>
+    </div>
+
+    <!-- Notes -->
+    <div>
+        <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold text-gray-700">Notes</h3>
+            <a href="{% url 'tasks:note_create' task.pk %}"
+               class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">+ Add Note</a>
+        </div>
+        <div id="notes-list" class="space-y-3">
+            {% for note in notes %}
+                {% include "partials/note_item.html" %}
+            {% endfor %}
+            {% if not notes %}
+            <p class="text-sm text-gray-400 py-2">No notes yet</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tags -->
+    {% if task.tags.all %}
+    <div>
+        <h3 class="text-sm font-semibold text-gray-700 mb-2">Tags</h3>
+        <div class="flex flex-wrap gap-2">
+            {% for tag in task.tags.all %}
+            <a href="{% url 'tasks:tag_detail' tag.pk %}"
+               class="text-xs px-2 py-1 rounded-full hover:opacity-80 transition-opacity"
+               style="background-color: {{ tag.color }}20; color: {{ tag.color }}">
+                #{{ tag.name }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>

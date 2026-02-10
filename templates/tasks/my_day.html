@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}My Day - SRTask{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">My Day</h1>
+            <p class="text-sm text-gray-500 mt-1">{{ today|date:"l, F j" }}</p>
+        </div>
+    </div>
+
+    <!-- Inline task add -->
+    <form method="post" action="{% url 'tasks:task_create' %}"
+          hx-post="{% url 'tasks:task_create' %}"
+          hx-target="#task-list"
+          hx-swap="afterbegin"
+          hx-on::after-request="if(event.detail.successful) this.reset()"
+          class="mb-6">
+        {% csrf_token %}
+        <input type="hidden" name="is_my_day" value="true">
+        <div class="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm hover:border-indigo-300 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <input type="text" name="title"
+                   class="flex-1 border-0 p-0 text-gray-900 placeholder-gray-400 focus:ring-0"
+                   placeholder="Add a task to My Day...">
+            <button type="submit" class="text-sm text-indigo-600 font-medium hover:text-indigo-700">Add</button>
+        </div>
+    </form>
+
+    <!-- Task list -->
+    <div id="task-list" class="space-y-2">
+        {% for task in tasks %}
+            {% include "partials/task_item.html" %}
+        {% empty %}
+            <div class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <p class="text-gray-400 text-lg">No tasks for today</p>
+                <p class="text-gray-300 text-sm mt-1">Add tasks or use Ctrl+K for quick capture</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

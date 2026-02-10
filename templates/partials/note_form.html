@@ -1,0 +1,23 @@
+<form method="post"
+      {% if note %}
+      action="{% url 'tasks:note_edit' note.pk %}"
+      {% else %}
+      action="{% url 'tasks:note_create' task.pk %}"
+      {% endif %}
+      class="bg-gray-50 rounded-lg p-4 space-y-3">
+    {% csrf_token %}
+    <div>
+        {{ form.title }}
+    </div>
+    <div>
+        <div id="note-editor" class="min-h-[100px] bg-white border border-gray-200 rounded-lg p-3 prose prose-sm" contenteditable="true">{% if note %}{{ note.content_html|safe }}{% endif %}</div>
+        {{ form.content_html }}
+        {{ form.content_json }}
+    </div>
+    <div class="flex justify-end gap-2">
+        <button type="submit" onclick="document.getElementById('id_content_html').value = document.getElementById('note-editor').innerHTML;"
+                class="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">
+            {% if note %}Save{% else %}Add Note{% endif %}
+        </button>
+    </div>
+</form>

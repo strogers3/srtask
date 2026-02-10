@@ -1,0 +1,56 @@
+<div id="task-{{ task.pk }}" class="group bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all {% if task.status == 'completed' %}opacity-60{% endif %}">
+    <div class="flex items-start gap-3">
+        <!-- Complete checkbox -->
+        <button hx-post="{% url 'tasks:task_toggle' task.pk %}"
+                hx-target="#task-{{ task.pk }}"
+                hx-swap="outerHTML"
+                class="mt-0.5 flex-shrink-0">
+            {% if task.status == 'completed' %}
+            <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            {% else %}
+            <div class="w-5 h-5 rounded-full border-2 hover:border-green-400 transition-colors"
+                 style="border-color: {{ task.priority_color }}"></div>
+            {% endif %}
+        </button>
+
+        <!-- Task content -->
+        <a href="{% url 'tasks:task_detail' task.pk %}"
+           class="flex-1 min-w-0"
+           hx-get="{% url 'tasks:task_detail' task.pk %}"
+           hx-target="#detail-panel"
+           hx-swap="innerHTML"
+           hx-push-url="true">
+            <p class="text-sm font-medium text-gray-900 {% if task.status == 'completed' %}line-through text-gray-400{% endif %}">
+                {{ task.title }}
+            </p>
+            <div class="flex items-center gap-2 mt-1 flex-wrap">
+                {% if task.due_date %}
+                <span class="text-xs {% if task.is_overdue %}text-red-500 font-medium{% else %}text-gray-400{% endif %}">
+                    {{ task.due_date|date:"M j" }}{% if task.due_time %} {{ task.due_time|time:"g:i A" }}{% endif %}
+                </span>
+                {% endif %}
+                {% if task.project %}
+                <span class="text-xs text-gray-400 flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full" style="background-color: {{ task.project.color }}"></span>
+                    {{ task.project.name }}
+                </span>
+                {% endif %}
+                {% if task.steps_progress %}
+                <span class="text-xs text-gray-400">{{ task.steps_progress }}</span>
+                {% endif %}
+                {% for tag in task.tags.all %}
+                <span class="text-xs px-1.5 py-0.5 rounded-full" style="background-color: {{ tag.color }}20; color: {{ tag.color }}">
+                    #{{ tag.name }}
+                </span>
+                {% endfor %}
+            </div>
+        </a>
+
+        <!-- Priority dot -->
+        <div class="flex-shrink-0 mt-1.5">
+            <div class="w-2 h-2 rounded-full priority-dot-{{ task.priority }}"></div>
+        </div>
+    </div>
+</div>

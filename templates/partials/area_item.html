@@ -1,0 +1,8 @@
+<a id="area-{{ area.pk }}" href="{% url 'tasks:area_detail' area.pk %}"
+   class="block bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+    <div class="flex items-center gap-3 mb-2">
+        <span class="w-4 h-4 rounded" style="background-color: {{ area.color }}"></span>
+        <h3 class="font-semibold text-gray-900">{{ area.name }}</h3>
+    </div>
+    <p class="text-sm text-gray-400">{{ area.projects.count }} project{{ area.projects.count|pluralize }}</p>
+</a>

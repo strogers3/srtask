@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ area.name }} - SRTask{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <span class="w-4 h-4 rounded" style="background-color: {{ area.color }}"></span>
+            <h1 class="text-2xl font-bold text-gray-900">{{ area.name }}</h1>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{% url 'tasks:area_edit' area.pk %}" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="grid gap-3 sm:grid-cols-2 mb-6">
+        {% for project in projects %}
+        <a href="{% url 'tasks:project_detail' project.pk %}"
+           class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full" style="background-color: {{ project.color }}"></span>
+                <h3 class="font-medium text-gray-900">{{ project.name }}</h3>
+            </div>
+        </a>
+        {% empty %}
+        <p class="col-span-2 text-gray-400 text-center py-8">No projects in this area</p>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'tasks:project_create' %}" class="text-sm text-indigo-600 hover:text-indigo-700">+ New project in {{ area.name }}</a>
+</div>
+{% endblock %}

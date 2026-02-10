@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Anytime - SRTask{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Anytime</h1>
+        <p class="text-sm text-gray-500 mt-1">Tasks with no due date</p>
+    </div>
+
+    <!-- Inline task add -->
+    <form method="post" action="{% url 'tasks:task_create' %}"
+          hx-post="{% url 'tasks:task_create' %}"
+          hx-target="#task-list"
+          hx-swap="afterbegin"
+          hx-on::after-request="if(event.detail.successful) this.reset()"
+          class="mb-6">
+        {% csrf_token %}
+        <div class="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm hover:border-indigo-300 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <input type="text" name="title"
+                   class="flex-1 border-0 p-0 text-gray-900 placeholder-gray-400 focus:ring-0"
+                   placeholder="Add a task...">
+            <button type="submit" class="text-sm text-indigo-600 font-medium hover:text-indigo-700">Add</button>
+        </div>
+    </form>
+
+    <div id="task-list" class="space-y-2">
+        {% for task in tasks %}
+            {% include "partials/task_item.html" %}
+        {% empty %}
+        <div class="text-center py-12">
+            <svg class="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+            </svg>
+            <p class="text-gray-400 text-lg">No anytime tasks</p>
+            <p class="text-gray-300 text-sm mt-1">Tasks without a due date will appear here</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+<div id="step-{{ step.pk }}" class="flex items-center gap-2 group">
+    <button hx-post="{% url 'tasks:step_toggle' step.pk %}"
+            hx-target="#step-{{ step.pk }}"
+            hx-swap="outerHTML"
+            class="flex-shrink-0">
+        {% if step.is_completed %}
+        <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        {% else %}
+        <div class="w-4 h-4 rounded-full border-2 border-gray-300 hover:border-green-400 transition-colors"></div>
+        {% endif %}
+    </button>
+    <span class="flex-1 text-sm {% if step.is_completed %}line-through text-gray-400{% else %}text-gray-700{% endif %}">
+        {{ step.title }}
+    </span>
+    <button hx-post="{% url 'tasks:step_delete' step.pk %}"
+            hx-target="#step-{{ step.pk }}"
+            hx-swap="outerHTML"
+            class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 transition-all">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+    </button>
+</div>

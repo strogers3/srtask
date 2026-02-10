@@ -1,0 +1,20 @@
+<form method="post"
+      {% if project %}
+      action="{% url 'tasks:project_edit' project.pk %}"
+      {% else %}
+      action="{% url 'tasks:project_create' %}"
+      {% endif %}
+      class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-3">
+    {% csrf_token %}
+    {% for field in form %}
+    <div>
+        <label for="{{ field.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1">{{ field.label }}</label>
+        {{ field }}
+    </div>
+    {% endfor %}
+    <div class="flex justify-end gap-2">
+        <button type="submit" class="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700">
+            {% if project %}Save{% else %}Create{% endif %}
+        </button>
+    </div>
+</form>

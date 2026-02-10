@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Areas - SRTask{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Areas</h1>
+        <a href="{% url 'tasks:area_create' %}"
+           class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+            New Area
+        </a>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+        {% for area in areas %}
+        <a href="{% url 'tasks:area_detail' area.pk %}"
+           class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="w-4 h-4 rounded" style="background-color: {{ area.color }}"></span>
+                <h3 class="font-semibold text-gray-900">{{ area.name }}</h3>
+            </div>
+            <p class="text-sm text-gray-400">{{ area.projects.count }} project{{ area.projects.count|pluralize }}</p>
+        </a>
+        {% empty %}
+        <div class="col-span-2 text-center py-12">
+            <p class="text-gray-400 text-lg">No areas yet</p>
+            <p class="text-gray-300 text-sm mt-1">Areas are life categories like Work, Personal, Health</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

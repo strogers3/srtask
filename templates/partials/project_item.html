@@ -1,0 +1,10 @@
+<a id="project-{{ project.pk }}" href="{% url 'tasks:project_detail' project.pk %}"
+   class="block bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-all">
+    <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full" style="background-color: {{ project.color }}"></span>
+        <h3 class="font-medium text-gray-900">{{ project.name }}</h3>
+    </div>
+    {% if project.description %}
+    <p class="text-sm text-gray-500 mt-1 line-clamp-2">{{ project.description }}</p>
+    {% endif %}
+</a>

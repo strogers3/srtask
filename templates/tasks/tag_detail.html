@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}#{{ tag.name }} - SRTask{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <span class="w-4 h-4 rounded-full" style="background-color: {{ tag.color }}"></span>
+            <h1 class="text-2xl font-bold text-gray-900">#{{ tag.name }}</h1>
+        </div>
+        <div class="flex items-center gap-2">
+            <a href="{% url 'tasks:tag_edit' tag.pk %}" class="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <div id="task-list" class="space-y-2">
+        {% for task in tasks %}
+            {% include "partials/task_item.html" %}
+        {% empty %}
+        <div class="text-center py-12">
+            <p class="text-gray-400">No tasks with this tag</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
