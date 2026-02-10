@@ -1,13 +1,15 @@
 <form method="post"
       {% if task %}
       action="{% url 'tasks:task_edit' task.pk %}"
-      hx-post="{% url 'tasks:task_edit' task.pk %}"
+      {% if inline_form %}hx-post="{% url 'tasks:task_edit' task.pk %}"{% endif %}
       {% else %}
       action="{% url 'tasks:task_create' %}"
-      hx-post="{% url 'tasks:task_create' %}"
+      {% if inline_form %}hx-post="{% url 'tasks:task_create' %}"{% endif %}
       {% endif %}
+      {% if inline_form %}
       hx-target="{% if task %}#task-{{ task.pk }}{% else %}#task-list{% endif %}"
       hx-swap="{% if task %}outerHTML{% else %}afterbegin{% endif %}"
+      {% endif %}
       class="bg-white border border-gray-200 rounded-xl p-4 shadow-sm space-y-4">
     {% csrf_token %}
 

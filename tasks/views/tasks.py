@@ -29,7 +29,7 @@ def task_create(request):
         form.fields['tags'].queryset = request.user.tags.all()
 
     if request.htmx:
-        return render(request, 'partials/task_form.html', {'form': form})
+        return render(request, 'partials/task_form.html', {'form': form, 'inline_form': True})
     return render(request, 'tasks/task_form.html', {'form': form, 'page_title': 'New Task'})
 
 
@@ -70,7 +70,7 @@ def task_edit(request, pk):
         form.fields['tags'].queryset = request.user.tags.all()
 
     if request.htmx:
-        return render(request, 'partials/task_form.html', {'form': form, 'task': task})
+        return render(request, 'partials/task_form.html', {'form': form, 'task': task, 'inline_form': True})
     return render(request, 'tasks/task_form.html', {'form': form, 'task': task, 'page_title': 'Edit Task'})
 
 
