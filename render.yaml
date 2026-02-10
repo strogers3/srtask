@@ -27,8 +27,8 @@ services:
       - key: CSRF_TRUSTED_ORIGINS
         value: ""
       - key: DJANGO_SUPERUSER_USERNAME
-        value: "admin"
+        value: "stradmin"
       - key: DJANGO_SUPERUSER_EMAIL
-        value: "admin@example.com"
+        value: "strogers3@gmail.com"
       - key: DJANGO_SUPERUSER_PASSWORD
         value: "changeme123"
