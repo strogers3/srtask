@@ -10,16 +10,19 @@
         <p class="text-sm text-gray-500 mt-1">Tasks with due dates</p>
     </div>
 
-    <div id="task-list" class="space-y-6">
+    <div id="task-list" class="space-y-8">
         {% regroup tasks by due_date as date_groups %}
         {% for group in date_groups %}
         <div>
-            <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2 px-1">
-                {{ group.grouper|date:"l, F j" }}
-                {% if group.grouper == today %}
-                    <span class="text-indigo-600">(Today)</span>
-                {% endif %}
-            </h2>
+            <div class="flex items-center gap-3 mb-3 {% if group.grouper == today %}border-l-4 border-indigo-500 pl-3{% else %}pl-1{% endif %}">
+                <h2 class="text-sm font-semibold {% if group.grouper == today %}text-indigo-700{% else %}text-gray-500{% endif %} uppercase tracking-wide">
+                    {{ group.grouper|date:"l, F j" }}
+                    {% if group.grouper == today %}
+                        <span class="inline-flex items-center ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700 normal-case tracking-normal">Today</span>
+                    {% endif %}
+                </h2>
+                <span class="text-xs text-gray-400">{{ group.list|length }} task{{ group.list|length|pluralize }}</span>
+            </div>
             <div class="space-y-2">
                 {% for task in group.list %}
                     {% include "partials/task_item.html" %}
@@ -27,12 +30,14 @@
             </div>
         </div>
         {% empty %}
-        <div class="text-center py-12">
-            <svg class="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-            </svg>
-            <p class="text-gray-400 text-lg">No upcoming tasks</p>
-            <p class="text-gray-300 text-sm mt-1">Tasks with due dates will appear here</p>
+        <div class="text-center py-16">
+            <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg class="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-700 mb-1">No upcoming tasks</h3>
+            <p class="text-gray-400 text-sm">Tasks with due dates will appear here</p>
         </div>
         {% endfor %}
     </div>

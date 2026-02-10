@@ -6,8 +6,12 @@
 <div class="max-w-3xl mx-auto">
     <div class="flex items-center justify-between mb-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">My Day</h1>
-            <p class="text-sm text-gray-500 mt-1">{{ today|date:"l, F j" }}</p>
+            <h1 class="text-2xl font-bold text-gray-900" x-data x-init="
+                const hour = new Date().getHours();
+                const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+                $el.textContent = greeting + ', {{ user.first_name|default:user.username }}';
+            ">My Day</h1>
+            <p class="text-sm text-gray-500 mt-1">{{ today|date:"l, F j" }}{% if tasks %} &middot; {{ tasks|length }} task{{ tasks|length|pluralize }}{% endif %}</p>
         </div>
     </div>
 
@@ -36,12 +40,14 @@
         {% for task in tasks %}
             {% include "partials/task_item.html" %}
         {% empty %}
-            <div class="text-center py-12">
-                <svg class="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-                </svg>
-                <p class="text-gray-400 text-lg">No tasks for today</p>
-                <p class="text-gray-300 text-sm mt-1">Add tasks or use Ctrl+K for quick capture</p>
+            <div class="text-center py-16">
+                <div class="w-20 h-20 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                    <svg class="w-10 h-10 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-700 mb-1">Your day is clear</h3>
+                <p class="text-gray-400 text-sm max-w-xs mx-auto">Add tasks above or press <kbd class="px-1.5 py-0.5 bg-gray-100 rounded text-xs font-mono">Ctrl+K</kbd> for quick capture</p>
             </div>
         {% endfor %}
     </div>
